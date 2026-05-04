@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>🎯 Подбор режущей пластины</h2>
+    
+    <!-- Отладочная информация -->
+    <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
+        <small>Статус: 
+        {% if user %}✅ Вы вошли как {{ user.username }}{% else %}❌ Не авторизованы{% endif %}
+        </small>
+    </div>
+    
+    <form method="POST" action="/web/select-plate">
+        <div class="form-group">
+            <label>Группа материала:</label>
+            <select name="material_group" required>
+                <option value="P" {% if selected_group == 'P' %}selected{% endif %}>P - Сталь</option>
+                <option value="M" {% if selected_group == 'M' %}selected{% endif %}>M - Нержавеющая сталь</option>
+                <option value="K" {% if selected_group == 'K' %}selected{% endif %}>K - Чугун</option>
+                <option value="N" {% if selected_group == 'N' %}selected{% endif %}>N - Алюминий</option>
+                <option value="S" {% if selected_group == 'S' %}selected{% endif %}>S - Титан</option>
+                <option value="H" {% if selected_group == 'H' %}selected{% endif %}>H - Закаленная сталь</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Глубина резания (мм):</label>
+            <input type="number" name="cutting_depth_mm" step="0.1" value="{{ selected_depth or '3' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Тип обработки:</label>
+            <select name="operation_type" required>
+                <option value="черновая" {% if selected_operation == 'черновая' %}selected{% endif %}>Черновая обработка</option>
+                <option value="чистовая" {% if selected_operation == 'чистовая' %}selected{% endif %}>Чистовая обработка</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Максимальная цена (руб):</label>
+            <input type="number" name="max_price" step="0.01" value="{{ selected_price or '' }}" placeholder="Не ограничена">
+        </div>
+        
+        <button type="submit">Подобрать пластину</button>
+    </form>
+</div>
+
+{% if recommendations is not none %}
+<div class="card">
+    <h3>🎯 Результаты подбора:</h3>
+    {% if recommendations %}
+        {% for plate, score, reason in recommendations %}
+        <div class="recommendation-item">
+            <strong>{{ plate.name }}</strong><br>
+            <span class="score">Совместимость: {{ score }}%</span><br>
+            📋 Материал: {{ plate.material }}<br>
+            💰 Цена: {{ plate.price }} руб.<br>
+            📏 Макс. глубина: {{ plate.max_depth_mm }} мм<br>
+            💡 <strong>Причина:</strong> {{ reason }}
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>❌ По вашему запросу пластин не найдено.</p>
+        <p>Возможные причины:</p>
+        <ul>
+            <li>В базе данных нет пластин</li>
+            <li>Нет пластин, подходящих под заданные параметры</li>
+            <li>Попробуйте изменить параметры поиска</li>
+        </ul>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>📁 Управление категориями</h2>
+    
+    <h3>➕ Добавить категорию</h3>
+    <form method="POST" action="/web/add-category">
+        <div class="form-group">
+            <label>Название категории:</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label>Описание:</label>
+            <input type="text" name="description" required>
+        </div>
+        <div class="form-group">
+            <label>Диапазон твердости:</label>
+            <input type="text" name="hardness_range" placeholder="HRC 40-60" required>
+        </div>
+        <button type="submit">Добавить категорию</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3>📋 Список категорий</h3>
+    {% if categories %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background: #667eea; color: white;">
+                <th style="padding: 10px; text-align: left;">ID</th>
+                <th style="padding: 10px; text-align: left;">Название</th>
+                <th style="padding: 10px; text-align: left;">Описание</th>
+                <th style="padding: 10px; text-align: left;">Твердость</th>
+                <th style="padding: 10px; text-align: left;">Действия</th>
+            </tr>
+            {% for cat in categories %}
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 10px;">{{ cat.id }}</td>
+                <td style="padding: 10px;">{{ cat.name }}</td>
+                <td style="padding: 10px;">{{ cat.description }}</td>
+                <td style="padding: 10px;">{{ cat.hardness_range }}</td>
+                <td style="padding: 10px;">
+                    <a href="/web/delete-category/{{ cat.id }}" class="btn" style="background: #dc3545;" onclick="return confirm('Удалить категорию?')">Удалить</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Категорий пока нет. Создайте первую!</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>💡 Подсказка:</h3>
+    <p>ID категории используется при добавлении пластины.</p>
+    <p>Нельзя удалить категорию, в которой есть пластины.</p>
+</div>
+{% endblock %}

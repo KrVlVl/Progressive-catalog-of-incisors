@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Панель управления</h2>
+
+<div class="card">
+    <h3>➕ Добавить новую пластину</h3>
+    <form method="POST" action="/web/add-plate">
+        <div class="form-group">
+            <label>Название пластины:</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label>Материал:</label>
+            <input type="text" name="material" required>
+        </div>
+        <div class="form-group">
+            <label>Покрытие:</label>
+            <input type="text" name="coating">
+        </div>
+        <div class="form-group">
+            <label>Цена (руб):</label>
+            <input type="number" name="price" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label>Количество на складе:</label>
+            <input type="number" name="stock_quantity" required>
+        </div>
+        <div class="form-group">
+            <label>Группа материала (P, M, K, N, S, H):</label>
+            <input type="text" name="material_group" required>
+        </div>
+        <div class="form-group">
+            <label>Максимальная глубина резания (мм):</label>
+            <input type="number" name="max_depth_mm" step="0.1" required>
+        </div>
+        <div class="form-group">
+            <label>Рекомендуемая скорость (м/мин):</label>
+            <input type="number" name="recommended_speed_m_min" required>
+        </div>
+        <div class="form-group">
+            <label>ID категории:</label>
+            <input type="number" name="category_id" required>
+        </div>
+        <button type="submit">Добавить пластину</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3>📋 Список пластин</h3>
+    {% if plates %}
+        {% for plate in plates %}
+        <div class="plate-item">
+            <strong>{{ plate.name }}</strong><br>
+            Материал: {{ plate.material }} | Покрытие: {{ plate.coating if plate.coating else 'нет' }}<br>
+            Цена: {{ plate.price }} руб. | В наличии: {{ plate.stock_quantity }} шт.<br>
+            <a href="/web/delete-plate/{{ plate.id }}" class="btn" onclick="return confirm('Удалить эту пластину?')">🗑 Удалить</a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>Пластин пока нет. Добавьте первую пластину!</p>
+    {% endif %}
+</div>
+{% endblock %}
